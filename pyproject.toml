@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyexco"
+version = "0.1.0"
+description = "Excitation control for closed-loop random vibration testing: the PSD update rule, and nothing else"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Gal Stanovnik" },
+    { name = "Klemen Zaletelj" },
+    { name = "Janko Slavič" },
+]
+# Deliberately permissive: this package is meant to be a dependency of LDAQ, and
+# a dependency must never be the thing that forces its dependents up a version.
+# Nothing here uses syntax newer than 3.9.
+requires-python = ">=3.9"
+# The entire dependency list. No scipy: the package does no spectral estimation.
+dependencies = ["numpy>=1.23"]
+keywords = ["vibration", "shaker", "random vibration", "control", "PSD", "LDAQ"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyExCo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+addopts = "--doctest-modules"
