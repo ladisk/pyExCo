@@ -5,34 +5,77 @@ build-backend = "hatchling.build"
 [project]
 name = "pyexco"
 version = "0.1.0"
-description = "Excitation control for closed-loop random vibration testing: the PSD update rule, and nothing else"
-readme = "README.md"
-license = { file = "LICENSE" }
 authors = [
-    { name = "Gal Stanovnik" },
-    { name = "Klemen Zaletelj" },
-    { name = "Janko Slavič" },
+    {name = "Gal Stanovnik"},
+    {name = "Klemen Zaletelj"},
+    {name = "Janko Slavič"},
 ]
+maintainers = [{name = "Gal Stanovnik"}]
+license = "MIT"
+# Hatchling's default glob is `LICEN[CS]E*`, which does not match `License`.
+license-files = ["License"]
+description = "Excitation control for closed-loop random vibration testing: the PSD update rule, and nothing else"
+readme = "README.rst"
+keywords = ["vibration", "shaker", "random vibration", "control", "PSD", "LDAQ", "sdypy"]
 # Deliberately permissive: this package is meant to be a dependency of LDAQ, and
 # a dependency must never be the thing that forces its dependents up a version.
 # Nothing here uses syntax newer than 3.9.
 requires-python = ">=3.9"
+
+# Dependency management (these must be installed for the package to work)
 # The entire dependency list. No scipy: the package does no spectral estimation.
-dependencies = ["numpy>=1.23"]
-keywords = ["vibration", "shaker", "random vibration", "control", "PSD", "LDAQ"]
-classifiers = [
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Topic :: Scientific/Engineering :: Physics",
+dependencies = [
+    "numpy>=1.23",
 ]
 
+# Note: no "License :: ..." classifier here on purpose -- with the SPDX
+# `license` field above (PEP 639) the classifier is deprecated.
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Science/Research',
+    'Topic :: Scientific/Engineering :: Physics',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+]
+
+# Optional dependencies (can be installed with `pip install pyexco[dev]`).
+# Can add as many as you want, but they must be listed in the `optional-dependencies` section.
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = [
+    "pytest>=7",
+    "build",
+    "twine",
+    "flake8",
+    "pyexco[docs]",
+]
 
+# Documentation-only dependencies (also used by Read the Docs, see .readthedocs.yaml).
+docs = [
+    "sphinx",
+    "sphinx-book-theme",
+    "sphinx-copybutton>=0.5.2",
+]
+
+[project.urls]
+homepage = "https://github.com/GalStanovnik/pyExCo"
+documentation = "https://github.com/GalStanovnik/pyExCo"
+source = "https://github.com/GalStanovnik/pyExCo"
+
+# Define the files that are included in the wheel
 [tool.hatch.build.targets.wheel]
-packages = ["src/pyExCo"]
+include = ["pyExCo/*"]
 
+# Define the files that are included in the source distribution (tar.gz)
+[tool.hatch.build.targets.sdist]
+include = [
+    "pyExCo/*"
+]
+
+# The docstring examples are tests too: run them alongside tests/.
 [tool.pytest.ini_options]
-testpaths = ["tests", "src"]
+testpaths = ["tests", "pyExCo"]
 addopts = "--doctest-modules"
