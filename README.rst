@@ -1,8 +1,7 @@
 pyExCo
 ------
 
-**Excitation control for closed-loop random vibration testing: the PSD update
-rule, and nothing else.**
+**Excitation control for closed-loop random vibration testing: the PSD update rule**
 
 Given the drive PSD you played, the response PSD you measured, and the response
 PSD you wanted, ``update_psd`` returns the drive PSD to play next:
@@ -11,16 +10,16 @@ PSD you wanted, ``update_psd`` returns the drive PSD to play next:
 
     S_\text{drive} \leftarrow S_\text{drive}\left(\frac{S_\text{target}}{S_\text{response}}\right)^{\alpha}
 
-That is the package. It does not estimate spectra, design target profiles,
-synthesize waveforms, talk to hardware, or run the loop — those belong to the
-caller, which for the intended user is `LDAQ <https://github.com/ladisk/LDAQ>`_.
+Estimating spectra, designing target profiles, synthesizing waveforms,
+talking to hardware, and running the loop belong to the caller,
+which for the intended user is `LDAQ <https://github.com/ladisk/LDAQ>`_.
 
 .. code-block:: console
 
     $ pip install pyexco    # numpy is the entire dependency list
 
 
-Why frequency domain, and why no sample rate
+Why frequency domain, and not time domain?
 --------------------------------------------
 
 The controller's *state* is a PSD, not a waveform. Each iteration throws the
