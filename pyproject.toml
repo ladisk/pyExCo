@@ -6,11 +6,11 @@ build-backend = "hatchling.build"
 name = "pyexco"
 version = "0.1.0"
 authors = [
-    {name = "Gal Stanovnik"},
-    {name = "Klemen Zaletelj"},
-    {name = "Janko Slavič"},
+    {name = "Gal Stanovnik", email = "gal.stanovnik@fs.uni-lj.si"},
+    {name = "Klemen Zaletelj", email = "klemen.zaletelj@fs.uni-lj.si"},
+    {name = "Janko Slavič", email = "janko.slavic@fs.uni-lj.si"},
 ]
-maintainers = [{name = "Gal Stanovnik"}]
+maintainers = [{name = "Gal Stanovnik", email = "gal.stanovnik@fs.uni-lj.si"}]
 license = "MIT"
 # Hatchling's default glob is `LICEN[CS]E*`, which does not match `License`.
 license-files = ["License"]
@@ -61,9 +61,9 @@ docs = [
 ]
 
 [project.urls]
-homepage = "https://github.com/GalStanovnik/pyExCo"
-documentation = "https://github.com/GalStanovnik/pyExCo"
-source = "https://github.com/GalStanovnik/pyExCo"
+homepage = "https://github.com/ladisk/pyExCo"
+documentation = "https://github.com/ladisk/pyExCo"
+source = "https://github.com/ladisk/pyExCo"
 
 # Define the files that are included in the wheel
 [tool.hatch.build.targets.wheel]
@@ -72,7 +72,9 @@ include = ["pyExCo/*"]
 # Define the files that are included in the source distribution (tar.gz)
 [tool.hatch.build.targets.sdist]
 include = [
-    "pyExCo/*"
+    "pyExCo/*",
+    "tests/*",
+    "examples/*",
 ]
 
 # The docstring examples are tests too: run them alongside tests/.

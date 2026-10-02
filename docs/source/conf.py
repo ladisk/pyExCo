@@ -134,7 +134,7 @@ htmlhelp_basename = project.lower().replace(' ', '_') + '_doc'
 html_theme_options = {
     "repository_branch": "main",
     "navigation_with_keys": True,
-    "repository_url": "https://github.com/GalStanovnik/pyExCo",
+    "repository_url": "https://github.com/ladisk/pyExCo",
     "use_repository_button": True,
 }
 

@@ -322,14 +322,16 @@ Continuous integration and publishing
 - **Testing** (``.github/workflows/python-package.yml``) — runs flake8 and pytest on
   every push and pull request, across Python 3.9 to 3.14.
 - **Release** (``.github/workflows/release-and-publish-to-pypi.yml``) — triggered when
-  a ``v*`` tag is pushed; syncs the version, builds the distribution, creates a
-  GitHub Release, and publishes to PyPI.
+  a ``v*`` tag is pushed; checks that the tag matches the committed version, runs the
+  tests, builds the distribution, creates a GitHub Release, and publishes to PyPI.
 
 Publishing uses `PyPI Trusted Publishing <https://docs.pypi.org/trusted-publishers/>`_,
 so no API token is stored in the repository. Register the GitHub repository as a
 trusted publisher on PyPI (for a project not yet on PyPI, as a *pending publisher*
 with project name ``pyexco``) with these values:
 
+- **Owner:** ``ladisk``
+- **Repository name:** ``pyExCo``
 - **Workflow name:** ``release-and-publish-to-pypi.yml``
 - **Environment name:** ``pypi``
 
