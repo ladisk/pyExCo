@@ -6,9 +6,9 @@ pyExCo
 Given the drive PSD you played, the response PSD you measured, and the response
 PSD you wanted, ``update_psd`` returns the drive PSD to play next:
 
-.. math::
+::
 
-    S_\text{drive} \leftarrow S_\text{drive}\left(\frac{S_\text{target}}{S_\text{response}}\right)^{\alpha}
+    S_drive  <-  S_drive * (S_target / S_response) ** alpha
 
 Estimating spectra, designing target profiles, synthesizing waveforms,
 talking to hardware, and running the loop belong to the caller,
@@ -114,14 +114,12 @@ project base directory with:
 Why it works without a plant model
 ----------------------------------
 
-For a linear time-invariant plant, :math:`S_\text{response} = |H|^2 S_\text{drive}`.
-Substitute that into the update at ``alpha=1``:
+For a linear time-invariant plant, ``S_response = |H|² * S_drive``.
+Substitute that into the update at ``alpha=1``::
 
-.. math::
+    S_drive_new  =  S_drive * S_target / (|H|² * S_drive)  =  S_target / |H|²
 
-    S_\text{drive}^\text{new} = S_\text{drive}\cdot\frac{S_\text{target}}{|H|^2 S_\text{drive}} = \frac{S_\text{target}}{|H|^2}
-
-The unknown :math:`|H|^2` cancels algebraically and you land on the answer in one step.
+The unknown ``|H|²`` cancels algebraically and you land on the answer in one step.
 It is Newton's method in the log domain, and the plant is never measured, stored
 or inverted. For ``alpha < 1`` the in-band log-error is multiplied by ``(1 - alpha)``
 each iteration — geometric convergence, per line.
