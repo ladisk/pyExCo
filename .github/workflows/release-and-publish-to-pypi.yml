@@ -15,7 +15,7 @@ jobs:
       url: https://pypi.org/p/pyexco
 
     permissions:
-      contents: write    # commit the version sync and create the GitHub Release
+      contents: write    # create the GitHub Release
       id-token: write    # PyPI Trusted Publishing (OIDC), no API token needed
 
     steps:
@@ -26,51 +26,40 @@ jobs:
         python-version: "3.12"
 
     - name: Install dependencies
-      run: pip install build
-
-    - name: Extract tag version
-      id: tag
-      run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
-    - name: Set version from tag
-      run: python sync_version.py --set-version ${{ steps.tag.outputs.version }}
-
-    - name: Check if there are changes
-      id: diff
       run: |
-        if git diff --quiet; then
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "changed=true" >> $GITHUB_OUTPUT
+        python -m pip install --upgrade pip
+        pip install build twine pytest
+        pip install .
+
+    # The tag must name the version that is already committed: the release is
+    # built from the tagged commit as it is, nothing is rewritten or pushed.
+    - name: Check that the tag matches the package version
+      run: |
+        tag="${GITHUB_REF#refs/tags/v}"
+        toml=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+        init=$(python -c "import pyExCo; print(pyExCo.__version__)")
+        echo "tag: $tag, pyproject.toml: $toml, pyExCo.__version__: $init"
+        if [ "$tag" != "$toml" ] || [ "$tag" != "$init" ]; then
+          echo "::error::Tag v$tag does not match the version in pyproject.toml ($toml) and pyExCo/__init__.py ($init). Run sync_version.py, commit, and tag again."
+          exit 1
         fi
 
-    - name: Commit version sync (if needed)
-      if: steps.diff.outputs.changed == 'true'
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git commit -am "sync version to ${{ steps.tag.outputs.version }}"
-        git push origin HEAD:main
+    - name: Test with pytest
+      run: pytest
 
     - name: Build distribution
-      run: python -m build
+      run: |
+        python -m build
+        twine check --strict dist/*
 
     - name: Create GitHub Release and upload artifacts
       uses: softprops/action-gh-release@v3
       with:
         files: dist/*
+        generate_release_notes: true
 
     # Publishing uses PyPI Trusted Publishing: configure this repository and
     # workflow file as a trusted publisher on PyPI (Your projects -> Publishing).
     # No PYPI_API_TOKEN secret is required.
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.14.2
-
-    # Alternative, if you cannot use Trusted Publishing: store a PyPI API token
-    # as the PYPI_API_TOKEN repository secret, drop the `id-token: write`
-    # permission above, and use this step instead of the one above.
-    #
-    # - name: Publish to PyPI
-    #   uses: pypa/gh-action-pypi-publish@v1.14.2
-    #   with:
-    #     password: ${{ secrets.PYPI_API_TOKEN }}
+      uses: pypa/gh-action-pypi-publish@release/v1
