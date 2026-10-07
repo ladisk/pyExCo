@@ -49,27 +49,24 @@ Conventions worth knowing before touching `_core.py`:
 - `max_step_db` clamps the ratio *before* the `alpha` exponent — the real
   per-iteration step limit is `alpha * max_step_db`, not `max_step_db`.
 
-## Relationship to the broader SIgMA project
+## Relationship to other projects
 
-pyExCo is a sibling repo to `SIgMA` and `sigma_method`, standalone and
-installable on its own (`pip install pyexco`). It is **not** imported by
-`SIgMA` or the `sigma` package. It *is* consumed by **`sigma_method`**
-(the DAQ/acquisition side of the project):
+pyExCo is standalone, public (`ladisk/pyExCo`) and installable on its own
+(`pip install pyexco`). It does not import or depend on any other project.
+Downstream projects (for example the SIgMA measurement code) use it as an
+ordinary dependency, either from PyPI or from git; developing it against such
+a project means pointing that project's `[tool.uv.sources]` entry at a local
+editable path.
 
-- `sigma_method/code/DAQ/003_get_excitation.py` imports `pyExCo` and calls
-  `pyExCo.error_db`, `pyExCo.metrics`, `pyExCo.update_psd` to build the drive
-  for a target spectrum (open- or closed-loop excitation). That script owns
-  the profile design, the hardware, and the loop; the control law itself
-  lives here.
-- In `sigma_method`'s `pyproject.toml`/`uv.lock`, `pyexco` is pulled from git
-  (`GalStanovnik/pyExCo`), pinned to a commit; developing it locally means
-  pointing `sigma_method`'s `[tool.uv.sources]` entry at `{ path = "../pyExCo", editable = true }`.
-- README/docstrings describe the intended caller more generally as
+- README/docstrings describe the intended caller as
   [LDAQ](https://github.com/ladisk/LDAQ) (data-acquisition library by the
-  same author group), of which `sigma_method`'s DAQ scripts are one user.
+  same author group): the caller owns profile design, hardware and the loop;
+  the control law lives here.
 - `pyproject.toml` deliberately pins `requires-python = ">=3.9"` and nothing
   newer-than-3.9 syntax "so this dependency never forces its dependents up a
   version" — a direct nod to being embedded in other projects' toolchains.
+- Because this is a published package, keep changes minimal and
+  backwards-compatible; the public API is the four names above.
 
 ## Repo layout
 
